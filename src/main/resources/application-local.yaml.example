@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/forklift_db?currentSchema=forklift
+    username: postgres
+    password: your_password
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: your_super_secret_key_at_least_32_characters_long

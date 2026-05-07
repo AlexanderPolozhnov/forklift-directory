@@ -40,25 +40,25 @@ Full-Stack приложение для управления справочник
 
 ### Переменные окружения
 
-Для запуска приложения (как локально, так и через Docker) необходимо настроить переменные окружения. Скопируйте `.env.example` в `.env` и установите свои значения:
+Для запуска приложения (как локально, так и через Docker) необходимо настроить переменные окружения.
 
+### Вариант 1: Файл .env (Docker и некоторые IDE)
+Скопируйте `.env.example` в `.env` и установите свои значения:
 ```bash
 cp .env.example .env
 ```
-
 Основные переменные:
-- `SPRING_DATASOURCE_URL` — URL подключения к БД (для локального запуска)
+- `SPRING_DATASOURCE_URL` — URL подключения к БД
 - `SPRING_DATASOURCE_USERNAME` — пользователь БД
 - `SPRING_DATASOURCE_PASSWORD` — пароль БД
 - `JWT_SECRET` — секретный ключ для подписи JWT (минимум 32 символа)
   Можно сгенерировать самостоятельно, например:
-
-Linux / Mac:
-  openssl rand -base64 32
-
-Windows (PowerShell):
-  [Convert]::ToBase64String((1..32 | ForEach-Object {Get-Random -Maximum 256}))
+  - Linux/Mac: `openssl rand -base64 32`
+  - Windows (PS): `[Convert]::ToBase64String((1..32 | ForEach-Object {Get-Random -Maximum 256}))`
 - `DB_USER` / `DB_PASSWORD` — используются в Docker Compose
+
+### Вариант 2: application-local.yaml (Spring Profile)
+Используется при запуске с профилем `local`. Подробнее в разделе [Запуск для разработки](#запуск-для-разработки-local-profile).
 
 ## Запуск через Docker Compose
 
@@ -88,8 +88,15 @@ CREATE DATABASE forklift_db;
 ```
 
 ### 2. Запуск Backend
-Приложение настроено на использование профиля `local` для разработки. В этом профиле используются настройки из `application-local.yaml`.
+Приложение настроено на использование профиля `local` для разработки. 
 
+1. Создайте файл `src/main/resources/application-local.yaml` на основе шаблона:
+```bash
+cp src/main/resources/application-local.yaml.example src/main/resources/application-local.yaml
+```
+2. Установите свои значения (пароль БД, секретный ключ JWT) в созданном файле.
+
+3. Запустите приложение:
 ```bash
 # Запуск с профилем local через Maven
 ./mvnw spring-boot:run "-Dspring-boot.run.profiles=local"
