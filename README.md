@@ -92,7 +92,7 @@ CREATE DATABASE forklift_db;
 
 ```bash
 # Запуск с профилем local через Maven
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+./mvnw spring-boot:run "-Dspring-boot.run.profiles=local"
 
 # Или установите переменную окружения
 export SPRING_PROFILES_ACTIVE=local
