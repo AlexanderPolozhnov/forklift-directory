@@ -10,6 +10,10 @@ Full-Stack приложение для управления справочник
 - **Безопасность** — запрет удаления погрузчика при наличии инцидентов (HTTP 409)
 - **Аудит** — поле `modifiedBy` заполняется из JWT текущего пользователя
 
+> Схема `forklift` и таблицы создаются миграциями Flyway при первом запуске приложения.
+
+---
+
 ## Стек технологий
 
 ### Backend
@@ -31,7 +35,30 @@ Full-Stack приложение для управления справочник
 
 - Java 21
 - Node.js 20+
-- Docker & Docker Compose
+- PostgreSQL 16+
+- Docker & Docker Compose — опционально, только для запуска через Docker
+
+### Переменные окружения
+
+Для запуска приложения (как локально, так и через Docker) необходимо настроить переменные окружения. Скопируйте `.env.example` в `.env` и установите свои значения:
+
+```bash
+cp .env.example .env
+```
+
+Основные переменные:
+- `SPRING_DATASOURCE_URL` — URL подключения к БД (для локального запуска)
+- `SPRING_DATASOURCE_USERNAME` — пользователь БД
+- `SPRING_DATASOURCE_PASSWORD` — пароль БД
+- `JWT_SECRET` — секретный ключ для подписи JWT (минимум 32 символа)
+  Можно сгенерировать самостоятельно, например:
+
+Linux / Mac:
+  openssl rand -base64 32
+
+Windows (PowerShell):
+  [Convert]::ToBase64String((1..32 | ForEach-Object {Get-Random -Maximum 256}))
+- `DB_USER` / `DB_PASSWORD` — используются в Docker Compose
 
 ## Запуск через Docker Compose
 
@@ -49,29 +76,30 @@ docker compose up --build
 # Swagger UI: http://localhost:8080/swagger-ui.html
 ```
 
-### Переменные окружения (опционально)
+## Запуск для разработки (Local profile)
 
-Создайте `.env` файл в корне проекта:
+Для локального запуска без Docker:
 
-```env
-DB_USER=postgres
-DB_PASSWORD=postgres
-JWT_SECRET=your-secret-key-min-32-chars
+### 1. Подготовка PostgreSQL
+Установите PostgreSQL и создайте базу данных:
+
+```sql
+CREATE DATABASE forklift_db;
 ```
 
-## Запуск для разработки
-
-### Backend
+### 2. Запуск Backend
+Приложение настроено на использование профиля `local` для разработки. В этом профиле используются настройки из `application-local.yaml`.
 
 ```bash
-# Запустить PostgreSQL
-docker compose up postgres -d
+# Запуск с профилем local через Maven
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 
-# Запустить backend
+# Или установите переменную окружения
+export SPRING_PROFILES_ACTIVE=local
 ./mvnw spring-boot:run
 ```
 
-### Frontend
+### 3. Запуск Frontend
 
 ```bash
 cd frontend
