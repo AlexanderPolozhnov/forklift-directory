@@ -20,7 +20,6 @@ target/
 out/
 .junie
 private-notes/
-src/main/resources/application.yaml
 
 ### NetBeans ###
 /nbproject/private/
