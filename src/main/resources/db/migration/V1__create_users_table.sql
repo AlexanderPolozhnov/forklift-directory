@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS forklift;
+SET search_path TO forklift;
+
 CREATE TABLE app_users (
     id          BIGSERIAL PRIMARY KEY,
     username    VARCHAR(100) NOT NULL UNIQUE,

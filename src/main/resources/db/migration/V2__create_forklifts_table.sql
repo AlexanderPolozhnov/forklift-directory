@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS forklift;
+SET search_path TO forklift;
+
 CREATE TABLE forklifts (
     id             BIGSERIAL PRIMARY KEY,
     brand          VARCHAR(255) NOT NULL,

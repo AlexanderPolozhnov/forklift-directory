@@ -42,7 +42,6 @@ Thumbs.db
 
 # Spring Boot
 *.log
-application-local.yml
 
 # Environment
 .env

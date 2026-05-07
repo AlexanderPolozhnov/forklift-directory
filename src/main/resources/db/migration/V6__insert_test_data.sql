@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS forklift;
+SET search_path TO forklift;
+
 -- 10 forklifts
 INSERT INTO forklifts (brand, number, load_capacity, is_active, modified_at, modified_by) VALUES
     ('Toyota',       'TYT-1001', 1.500, TRUE,  NOW(), 'system'),

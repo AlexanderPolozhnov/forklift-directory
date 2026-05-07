@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS forklift;
+SET search_path TO forklift;
+
 CREATE TABLE incidents (
     id           BIGSERIAL PRIMARY KEY,
     forklift_id  BIGINT NOT NULL REFERENCES forklifts(id),
