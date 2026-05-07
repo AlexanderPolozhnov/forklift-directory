@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { App, Button, Empty, Space, Table, Typography } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import type { AxiosError } from 'axios';
+import {useState} from 'react';
+import {App, Button, Empty, Space, Table, Typography} from 'antd';
+import type {ColumnsType} from 'antd/es/table';
+import type {AxiosError} from 'axios';
 import dayjs from 'dayjs';
-import type { IncidentResponse, IncidentRequest } from '../../types';
-import { useDeleteIncident, useCreateIncident, useUpdateIncident, useIncidentList } from '../../hooks/useIncident';
-import { extractErrorMessage } from '../../utils/errorUtils';
+import type {IncidentRequest, IncidentResponse} from '../../types';
+import {useCreateIncident, useDeleteIncident, useIncidentList, useUpdateIncident} from '../../hooks/useIncident';
+import {extractErrorMessage} from '../../utils/errorUtils';
 import IncidentModal from './IncidentModal';
 import ConfirmModal from '../common/ConfirmModal';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -67,8 +67,7 @@ export default function IncidentTable({ forkliftId }: IncidentTableProps) {
 
   const handleDelete = () => {
     if (!deleteTarget) return;
-    const target = deleteTarget;
-    deleteMutation.mutate(target.id, {
+    deleteMutation.mutate(deleteTarget.id, {
       onSuccess: () => {
         setDeleteTarget(null);
         message.success('Инцидент успешно удалён');
@@ -150,7 +149,7 @@ export default function IncidentTable({ forkliftId }: IncidentTableProps) {
       <ConfirmModal
         open={!!deleteTarget}
         title="Удалить инцидент"
-        content={`Вы уверены, что хотите удалить инцидент от ${deleteTarget ? dayjs(deleteTarget.startedAt).format('DD.MM.YYYY HH:mm') : ''}?`}
+        content="Удалить информацию о простое? Вы уверены?"
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         confirmLoading={deleteMutation.isPending}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { AxiosError } from 'axios';
-import { App, Button, Checkbox, Divider, Form, Input, InputNumber, Layout, Space, Typography } from 'antd';
+import { App, Button, Checkbox, Divider, Form, Input, InputNumber, Layout, Modal, Space, Typography } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import ForkliftTable from '../components/forklift/ForkliftTable';
@@ -77,8 +77,19 @@ export default function ForkliftDirectoryPage() {
   };
 
   const handleCancel = () => {
-    form.resetFields();
-    setEditMode('none');
+    if (form.isFieldsTouched()) {
+      Modal.confirm({
+        title: 'Отмена изменений',
+        content: 'Не сохранять внесенные изменения? Вы уверены?',
+        onOk: () => {
+          form.resetFields();
+          setEditMode('none');
+        },
+      });
+    } else {
+      form.resetFields();
+      setEditMode('none');
+    }
   };
 
   const handleSave = async () => {
@@ -228,7 +239,7 @@ export default function ForkliftDirectoryPage() {
       <ConfirmModal
         open={!!deleteTarget}
         title="Удалить погрузчик"
-        content={`Вы уверены, что хотите удалить погрузчик "${deleteTarget?.brand} ${deleteTarget?.number}"?`}
+        content="Удалить погрузчик? Вы уверены?"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
         confirmLoading={deleteMutation.isPending}
