@@ -1,0 +1,30 @@
+import apiClient from './axios';
+import type { AuthRequest, AuthResponse, ForkliftRequest, ForkliftResponse, PageResponse } from '../types';
+
+export const authApi = {
+  login: async (data: AuthRequest): Promise<AuthResponse> => {
+    const response = await apiClient.post('/auth/login', data);
+    return response.data;
+  },
+};
+
+export const forkliftApi = {
+  getAll: async (number: string = '', page: number = 0, size: number = 20): Promise<PageResponse<ForkliftResponse>> => {
+    const response = await apiClient.get('/forklifts', { params: { number, page, size } });
+    return response.data;
+  },
+
+  create: async (data: ForkliftRequest): Promise<ForkliftResponse> => {
+    const response = await apiClient.post('/forklifts', data);
+    return response.data;
+  },
+
+  update: async (id: number, data: ForkliftRequest): Promise<ForkliftResponse> => {
+    const response = await apiClient.put(`/forklifts/${id}`, data);
+    return response.data;
+  },
+
+  delete: async (id: number): Promise<void> => {
+    await apiClient.delete(`/forklifts/${id}`);
+  },
+};
