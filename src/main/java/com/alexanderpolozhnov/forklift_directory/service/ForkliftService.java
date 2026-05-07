@@ -33,6 +33,9 @@ public class ForkliftService {
 
     @Transactional
     public ForkliftResponse create(ForkliftRequest request) {
+        if (forkliftRepository.existsByNumberIgnoreCase(request.number())) {
+            throw new BusinessException("Погрузчик с номером " + request.number() + " уже существует", HttpStatus.CONFLICT);
+        }
         Forklift forklift = forkliftMapper.toEntity(request);
         forklift.setModifiedBy(getCurrentUserFullName());
         return forkliftMapper.toResponse(forkliftRepository.save(forklift));
@@ -40,6 +43,9 @@ public class ForkliftService {
 
     @Transactional
     public ForkliftResponse update(Long id, ForkliftRequest request) {
+        if (forkliftRepository.existsByNumberIgnoreCaseAndIdNot(request.number(), id)) {
+            throw new BusinessException("Погрузчик с номером " + request.number() + " уже существует", HttpStatus.CONFLICT);
+        }
         Forklift forklift = findForkliftById(id);
         forkliftMapper.updateEntity(forklift, request);
         forklift.setModifiedBy(getCurrentUserFullName());

@@ -185,7 +185,14 @@ export default function ForkliftDirectoryPage() {
               <Form.Item name="brand" label="Марка" rules={[{ required: true, message: 'Введите марку' }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name="number" label="Номер" rules={[{ required: true, message: 'Введите номер' }]}>
+              <Form.Item
+                name="number"
+                label="Номер"
+                rules={[
+                  { required: true, message: 'Введите номер' },
+                  { pattern: /^\S+$/, message: 'Номер не должен содержать пробелы' }
+                ]}
+              >
                 <Input />
               </Form.Item>
               <Form.Item

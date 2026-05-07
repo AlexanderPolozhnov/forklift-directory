@@ -1,6 +1,7 @@
 package com.alexanderpolozhnov.forklift_directory.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -44,6 +45,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, Object>> handleAuthentication(AuthenticationException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.UNAUTHORIZED, "Неверный логин или пароль", request.getRequestURI());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
+        String message = "Ошибка целостности данных";
+        if (ex.getMessage() != null && ex.getMessage().contains("idx_forklifts_number_unique")) {
+            message = "Погрузчик с таким номером уже существует";
+        }
+        return buildResponse(HttpStatus.CONFLICT, message, request.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)

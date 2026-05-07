@@ -11,4 +11,8 @@ public interface ForkliftRepository extends JpaRepository<Forklift, Long> {
 
     @Query("SELECT f FROM Forklift f WHERE (:number IS NULL OR LOWER(f.number) LIKE LOWER(CONCAT('%', :number, '%')))")
     Page<Forklift> findByNumberContainingIgnoreCase(@Param("number") String number, Pageable pageable);
+
+    boolean existsByNumberIgnoreCase(String number);
+
+    boolean existsByNumberIgnoreCaseAndIdNot(String number, Long id);
 }
