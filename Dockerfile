@@ -1,12 +1,11 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
 
-# Копируем maven wrapper и pom.xml для кэширования зависимостей
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
+RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline -B
 
-# Копируем исходный код и собираем приложение
 COPY src ./src
 RUN ./mvnw package -DskipTests --no-transfer-progress
 
