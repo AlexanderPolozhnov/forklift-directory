@@ -25,6 +25,15 @@ spring:
     default-schema: forklift
     schemas: forklift
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: 28800000
