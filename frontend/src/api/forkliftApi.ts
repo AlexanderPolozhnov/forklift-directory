@@ -9,8 +9,8 @@ export const authApi = {
 };
 
 export const forkliftApi = {
-  getAll: async (number: string = '', page: number = 0, size: number = 20): Promise<PageResponse<ForkliftResponse>> => {
-    const response = await apiClient.get('/forklifts', { params: { number, page, size } });
+  getAll: async (number: string = ''): Promise<PageResponse<ForkliftResponse>> => {
+    const response = await apiClient.get('/forklifts', { params: { number, size: 1000 } });
     return response.data;
   },
 

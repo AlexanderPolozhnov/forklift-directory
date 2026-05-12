@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
-import { DatePicker, Form, Input, Modal, Typography } from 'antd';
+import { useEffect } from 'react';
+import { Button, DatePicker, Form, Input, Modal } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
 import type { IncidentRequest, IncidentResponse } from '../../types';
-import { formatDowntime } from '../../utils/downtimeFormatter';
 
 interface IncidentModalProps {
   open: boolean;
@@ -26,7 +25,6 @@ export default function IncidentModal({
   confirmLoading,
 }: IncidentModalProps) {
   const [form] = Form.useForm<FormValues>();
-  const [downtimePreview, setDowntimePreview] = useState<string>('');
 
   useEffect(() => {
     if (open) {
@@ -39,22 +37,12 @@ export default function IncidentModal({
       } else {
         form.setFieldsValue({
           startedAt: dayjs(),
-          resolvedAt: null,
+          resolvedAt: dayjs().add(3, 'hour'),
           description: '',
         });
       }
-      updateDowntimePreview();
     }
   }, [open, incident]);
-
-  const updateDowntimePreview = () => {
-    const values = form.getFieldsValue();
-    if (values.startedAt) {
-      const startedAt = values.startedAt.toISOString();
-      const resolvedAt = values.resolvedAt ? values.resolvedAt.toISOString() : null;
-      setDowntimePreview(formatDowntime(startedAt, resolvedAt));
-    }
-  };
 
   const handleOk = async () => {
     try {
@@ -73,33 +61,40 @@ export default function IncidentModal({
   return (
     <Modal
       open={open}
-      title={incident ? 'Изменить инцидент' : 'Добавить инцидент'}
-      onOk={handleOk}
+      className="incident-modal"
       onCancel={onCancel}
-      okText="Сохранить"
-      cancelText="Отмена"
-      confirmLoading={confirmLoading}
+      centered
+      width={480}
+      footer={null}
+      closable={false}
       destroyOnHidden
     >
-      <Form form={form} layout="vertical" onValuesChange={updateDowntimePreview}>
-        <Form.Item
-          name="startedAt"
-          label="Дата начала"
-          rules={[{ required: true, message: 'Дата начала обязательна' }]}
-        >
-          <DatePicker showTime style={{ width: '100%' }} format="DD.MM.YYYY HH:mm" />
+      <div className="incident-modal-title">Проблемы с погрузчиком?  опишите</div>
+      <div className="incident-modal-divider" />
+      <Form form={form} layout="vertical">
+        <div className="incident-date-row">
+          <Form.Item
+            name="startedAt"
+            label="начало"
+            rules={[{ required: true, message: 'Дата начала обязательна' }]}
+          >
+            <DatePicker showTime className="incident-date-picker" format="DD.MM.YYYY HH:mm" />
+          </Form.Item>
+          <Form.Item name="resolvedAt" label="окончание">
+            <DatePicker showTime className="incident-date-picker" format="DD.MM.YYYY HH:mm" />
+          </Form.Item>
+        </div>
+        <Form.Item name="description" label="описание инцидента">
+          <Input.TextArea rows={7} className="incident-description" />
         </Form.Item>
-        <Form.Item name="resolvedAt" label="Дата окончания">
-          <DatePicker showTime style={{ width: '100%' }} format="DD.MM.YYYY HH:mm" />
-        </Form.Item>
-        <Form.Item name="description" label="Описание">
-          <Input.TextArea rows={3} />
-        </Form.Item>
-        {downtimePreview && (
-          <Typography.Text type="secondary">
-            Время простоя: <strong>{downtimePreview}</strong>
-          </Typography.Text>
-        )}
+        <div className="incident-modal-actions">
+          <Button className="incident-save-button" loading={confirmLoading} onClick={handleOk}>
+            Сохранить
+          </Button>
+          <Button className="incident-exit-button" onClick={onCancel}>
+            Выход
+          </Button>
+        </div>
       </Form>
     </Modal>
   );

@@ -1,20 +1,22 @@
-import {useState} from 'react';
-import {App, Button, Empty, Space, Table, Typography} from 'antd';
-import type {ColumnsType} from 'antd/es/table';
-import type {AxiosError} from 'axios';
+import { useState } from 'react';
+import { App, Button, Empty, Table, Typography } from 'antd';
+import { CloseOutlined, EditOutlined } from '@ant-design/icons';
+import type { ColumnsType } from 'antd/es/table';
+import type { AxiosError } from 'axios';
 import dayjs from 'dayjs';
-import type {IncidentRequest, IncidentResponse} from '../../types';
-import {useCreateIncident, useDeleteIncident, useIncidentList, useUpdateIncident} from '../../hooks/useIncident';
-import {extractErrorMessage} from '../../utils/errorUtils';
+import type { IncidentRequest, IncidentResponse } from '../../types';
+import { useCreateIncident, useDeleteIncident, useIncidentList, useUpdateIncident } from '../../hooks/useIncident';
+import { extractErrorMessage } from '../../utils/errorUtils';
 import IncidentModal from './IncidentModal';
 import ConfirmModal from '../common/ConfirmModal';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 interface IncidentTableProps {
   forkliftId: number | null;
+  forkliftNumber: string | null;
 }
 
-export default function IncidentTable({ forkliftId }: IncidentTableProps) {
+export default function IncidentTable({ forkliftId, forkliftNumber }: IncidentTableProps) {
   const { message } = App.useApp();
   const { data: incidents, isLoading, isError } = useIncidentList(forkliftId);
   const createMutation = useCreateIncident();
@@ -89,55 +91,78 @@ export default function IncidentTable({ forkliftId }: IncidentTableProps) {
 
   const columns: ColumnsType<IncidentResponse> = [
     {
-      title: 'Дата начала',
+      title: 'Код записи',
+      dataIndex: 'id',
+      width: 50,
+      align: 'center',
+    },
+    {
+      title: 'Начало',
       dataIndex: 'startedAt',
+      width: 110,
+      align: 'center',
       render: (v: string) => dayjs(v).format('DD.MM.YYYY HH:mm'),
     },
     {
-      title: 'Дата окончания',
+      title: 'Окончание',
       dataIndex: 'resolvedAt',
+      width: 110,
+      align: 'center',
       render: (v: string | null) => v ? dayjs(v).format('DD.MM.YYYY HH:mm') : '—',
     },
     {
-      title: 'Простой',
+      title: 'Время простоя',
       dataIndex: 'downtimeFormatted',
+      width: 75,
+      align: 'center',
     },
     {
-      title: 'Описание',
+      title: 'Причина',
       dataIndex: 'description',
+      ellipsis: true,
       render: (v: string | null) => v ?? '—',
     },
     {
-      title: '',
+      title: 'Действия',
       key: 'actions',
+      width: 60,
+      align: 'center',
       render: (_: unknown, record: IncidentResponse) => (
-        <Space>
-          <Button size="small" onClick={() => handleEdit(record)}>Изменить</Button>
-          <Button size="small" danger onClick={() => setDeleteTarget(record)}>Удалить</Button>
-        </Space>
+        <span className="table-actions">
+          <EditOutlined className="table-action-icon" onClick={() => handleEdit(record)} />
+          <CloseOutlined className="table-action-icon" onClick={() => setDeleteTarget(record)} />
+        </span>
       ),
     },
   ];
 
   if (!forkliftId) {
-    return <Empty description="Выберите погрузчик для просмотра инцидентов" />;
+    return (
+      <div className="incident-panel incident-panel-empty">
+        <Empty description="Выберите погрузчик для просмотра инцидентов" />
+      </div>
+    );
   }
 
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <Typography.Text type="danger">Ошибка загрузки инцидентов</Typography.Text>;
+  if (isLoading) return <div className="incident-panel"><LoadingSpinner /></div>;
+  if (isError) return <div className="incident-panel"><Typography.Text type="danger">Ошибка загрузки инцидентов</Typography.Text></div>;
 
   return (
-    <>
-      <Space style={{ marginBottom: 8 }}>
-        <Button type="primary" onClick={handleAdd}>Добавить</Button>
-      </Space>
+    <div className="incident-panel">
+      <div className="incident-panel-header">
+        <span className="incident-panel-title">Простои по погрузчику</span>
+        <span className="incident-panel-number">{forkliftNumber}</span>
+      </div>
+      <Button className="red-action-button incident-add-button" onClick={handleAdd}>Добавить</Button>
       <Table
         rowKey="id"
+        className="pixel-table incident-table"
         columns={columns}
         dataSource={incidents ?? []}
         pagination={false}
         size="small"
         locale={{ emptyText: <Empty description="Нет инцидентов" /> }}
+        scroll={{ x: 515, y: 335 }}
       />
       <IncidentModal
         open={modalOpen}
@@ -154,6 +179,6 @@ export default function IncidentTable({ forkliftId }: IncidentTableProps) {
         onCancel={() => setDeleteTarget(null)}
         confirmLoading={deleteMutation.isPending}
       />
-    </>
+    </div>
   );
 }

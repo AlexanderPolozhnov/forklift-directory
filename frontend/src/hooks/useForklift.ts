@@ -4,10 +4,10 @@ import type { ForkliftRequest } from '../types';
 
 export const FORKLIFTS_KEY = 'forklifts';
 
-export function useForkliftList(number: string, page: number, size: number) {
+export function useForkliftList(number: string) {
   return useQuery({
-    queryKey: [FORKLIFTS_KEY, number, page, size],
-    queryFn: () => forkliftApi.getAll(number, page, size),
+    queryKey: [FORKLIFTS_KEY, number],
+    queryFn: () => forkliftApi.getAll(number),
   });
 }
 

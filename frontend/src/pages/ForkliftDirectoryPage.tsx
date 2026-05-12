@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import type { AxiosError } from 'axios';
-import { App, Button, Checkbox, Divider, Form, Input, InputNumber, Layout, Modal, Space, Typography } from 'antd';
-import { LogoutOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { App, Button, Layout, Modal, Typography } from 'antd';
 import ForkliftTable from '../components/forklift/ForkliftTable';
-import ForkliftToolbar from '../components/forklift/ForkliftToolbar';
 import ForkliftSearchBar from '../components/forklift/ForkliftSearchBar';
 import IncidentTable from '../components/incident/IncidentTable';
 import ConfirmModal from '../components/common/ConfirmModal';
@@ -15,121 +12,88 @@ import {
   useDeleteForklift,
 } from '../hooks/useForklift';
 import { extractErrorMessage } from '../utils/errorUtils';
-import { useAuthStore } from '../store/authStore';
 import type { ForkliftRequest, ForkliftResponse } from '../types';
 
-const { Header, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 
-interface EditForm {
-  brand: string;
-  number: string;
-  loadCapacity: number;
-  isActive: boolean;
-}
-
-type EditMode = 'none' | 'add' | 'edit';
+const sidebarItems = [
+  'Пользователи',
+  'Уведомления и напоминания',
+  'Настройки АИС ОГПА',
+  'Справочник погрузчиков',
+  'Резервное копирование и восстановление',
+  'Справочники',
+];
 
 export default function ForkliftDirectoryPage() {
-  const navigate = useNavigate();
-  const { fullName, clearAuth } = useAuthStore();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [searchNumber, setSearchNumber] = useState('');
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
   const [selectedForklift, setSelectedForklift] = useState<ForkliftResponse | null>(null);
-  const [editMode, setEditMode] = useState<EditMode>('none');
+  const [editingId, setEditingId] = useState<number | 'new' | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ForkliftResponse | null>(null);
 
-  const [form] = Form.useForm<EditForm>();
-
-  const { data, isLoading } = useForkliftList(searchNumber, page - 1, pageSize);
+  const { data, isLoading } = useForkliftList(searchNumber);
   const createMutation = useCreateForklift();
   const updateMutation = useUpdateForklift();
   const deleteMutation = useDeleteForklift();
 
-  const handleLogout = () => {
-    clearAuth();
-    navigate('/login');
-  };
-
   const handleSelect = (forklift: ForkliftResponse) => {
-    if (editMode !== 'none') return;
+    if (editingId !== null) return;
     setSelectedForklift(forklift);
   };
 
   const handleAdd = () => {
     setSelectedForklift(null);
-    form.resetFields();
-    form.setFieldsValue({ isActive: true });
-    setEditMode('add');
+    setEditingId('new');
   };
 
-  const handleEdit = () => {
-    if (!selectedForklift) return;
-    form.setFieldsValue({
-      brand: selectedForklift.brand,
-      number: selectedForklift.number,
-      loadCapacity: selectedForklift.loadCapacity,
-      isActive: selectedForklift.isActive,
-    });
-    setEditMode('edit');
+  const handleEdit = (forklift: ForkliftResponse) => {
+    setSelectedForklift(forklift);
+    setEditingId(forklift.id);
   };
 
-  const handleCancel = () => {
-    if (form.isFieldsTouched()) {
-      Modal.confirm({
+  const handleCancel = (hasChanges: boolean) => {
+    if (hasChanges) {
+      modal.confirm({
         title: 'Отмена изменений',
         content: 'Не сохранять внесенные изменения? Вы уверены?',
         onOk: () => {
-          form.resetFields();
-          setEditMode('none');
+          setEditingId(null);
         },
       });
     } else {
-      form.resetFields();
-      setEditMode('none');
+      setEditingId(null);
     }
   };
 
-  const handleSave = async () => {
-    try {
-      const values = await form.validateFields();
-      const request: ForkliftRequest = {
-        brand: values.brand,
-        number: values.number,
-        loadCapacity: values.loadCapacity,
-        isActive: values.isActive ?? true,
-      };
-      if (editMode === 'add') {
-        createMutation.mutate(request, {
-          onSuccess: (created) => {
-            setSelectedForklift(created);
-            setEditMode('none');
-            message.success('Погрузчик успешно добавлен');
-          },
-          onError: (error: unknown) => {
-            message.error(extractErrorMessage(error));
-          },
-        });
-      } else if (editMode === 'edit' && selectedForklift) {
-        updateMutation.mutate(
-          { id: selectedForklift.id, data: request },
-          {
-            onSuccess: (updated) => {
-              setSelectedForklift(updated);
-              setEditMode('none');
-              message.success('Погрузчик успешно обновлён');
-            },
-            onError: (error: unknown) => {
-              message.error(extractErrorMessage(error));
-            },
-          }
-        );
+  const handleSaveNew = (request: ForkliftRequest) => {
+    createMutation.mutate(request, {
+      onSuccess: (created) => {
+        setSelectedForklift(created);
+        setEditingId(null);
+        message.success('Сохранено');
+      },
+      onError: (error: unknown) => {
+        message.error(`Ошибка: ${extractErrorMessage(error)}`);
+      },
+    });
+  };
+
+  const handleSaveEdit = (id: number, request: ForkliftRequest) => {
+    updateMutation.mutate(
+      { id, data: request },
+      {
+        onSuccess: (updated) => {
+          setSelectedForklift(updated);
+          setEditingId(null);
+          message.success('Сохранено');
+        },
+        onError: (error: unknown) => {
+          message.error(`Ошибка: ${extractErrorMessage(error)}`);
+        },
       }
-    } catch {
-      // validation failed
-    }
+    );
   };
 
   const handleDeleteConfirm = () => {
@@ -149,92 +113,69 @@ export default function ForkliftDirectoryPage() {
         if (axiosError.response?.status === 409) {
           message.error(
             axiosError.response.data?.message ??
-            'Невозможно удалить погрузчик: имеются зарегистрированные простои'
+            'Удаление запрещено: имеются зарегистрированные простои'
           );
         } else {
-          message.error(extractErrorMessage(error));
+          message.error(`Ошибка: ${extractErrorMessage(error)}`);
         }
       },
     });
   };
 
   const forklifts = data?.content ?? [];
-  const total = data?.totalElements ?? 0;
-
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography.Title level={4} style={{ color: 'white', margin: 0 }}>
-          Справочник Погрузчики
-        </Typography.Title>
-        <Space>
-          <Typography.Text style={{ color: 'white' }}>{fullName}</Typography.Text>
-          <Button icon={<LogoutOutlined />} onClick={handleLogout} type="text" style={{ color: 'white' }}>
-            Выйти
-          </Button>
-        </Space>
+    <Layout className="app-shell">
+      <Header className="app-header">
+        <Button className="profile-button">Профиль</Button>
       </Header>
 
-      <Content style={{ padding: 24 }}>
-        <Space direction="vertical" style={{ width: '100%' }} size="middle">
-          <Space wrap>
-            <ForkliftSearchBar onSearch={(v) => { setSearchNumber(v); setPage(1); }} />
-            <ForkliftToolbar
-              editMode={editMode !== 'none'}
-              hasSelection={!!selectedForklift}
-              onAdd={handleAdd}
-              onEdit={handleEdit}
-              onDelete={() => selectedForklift && setDeleteTarget(selectedForklift)}
-              onSave={handleSave}
-              onCancel={handleCancel}
-              saveLoading={createMutation.isPending || updateMutation.isPending}
+      <Layout className="app-body">
+        <Sider width={140} className="app-sidebar">
+          {sidebarItems.map((item) => (
+            <div
+              key={item}
+              className={`sidebar-item ${item === 'Справочник погрузчиков' ? 'sidebar-item-active' : ''}`}
+            >
+              {item}
+            </div>
+          ))}
+        </Sider>
+
+        <Content className="app-content">
+          <Typography.Title level={1} className="page-title">
+            Справочник погрузчиков
+          </Typography.Title>
+
+          <ForkliftSearchBar onSearch={setSearchNumber} />
+
+          <Button className="red-action-button add-forklift-button" onClick={handleAdd} disabled={editingId !== null}>
+            Добавить
+          </Button>
+
+          <div className="tables-layout">
+            <div className="forklift-panel">
+              <ForkliftTable
+                data={forklifts}
+                loading={isLoading}
+                selectedId={selectedForklift?.id ?? null}
+                editingId={editingId}
+                onSelect={handleSelect}
+                onEdit={handleEdit}
+                onDelete={setDeleteTarget}
+                onSaveNew={handleSaveNew}
+                onSaveEdit={handleSaveEdit}
+                onCancel={handleCancel}
+                saveLoading={createMutation.isPending || updateMutation.isPending}
+              />
+            </div>
+
+            <IncidentTable
+              forkliftId={selectedForklift?.id ?? null}
+              forkliftNumber={selectedForklift?.number ?? null}
             />
-          </Space>
-
-          {editMode !== 'none' && (
-            <Form form={form} layout="inline">
-              <Form.Item name="brand" label="Марка" rules={[{ required: true, message: 'Введите марку' }]}>
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="number"
-                label="Номер"
-                rules={[
-                  { required: true, message: 'Введите номер' },
-                  { pattern: /^\S+$/, message: 'Номер не должен содержать пробелы' }
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="loadCapacity"
-                label="Грузоподъёмность (т)"
-                rules={[{ required: true, message: 'Введите грузоподъёмность' }]}
-              >
-                <InputNumber min={0.001} step={0.001} precision={3} style={{ width: 160 }} />
-              </Form.Item>
-              <Form.Item name="isActive" valuePropName="checked" label="Активен">
-                <Checkbox />
-              </Form.Item>
-            </Form>
-          )}
-
-          <ForkliftTable
-            data={forklifts}
-            loading={isLoading}
-            selectedId={selectedForklift?.id ?? null}
-            onSelect={handleSelect}
-            total={total}
-            page={page}
-            pageSize={pageSize}
-            onPageChange={(p, ps) => { setPage(p); setPageSize(ps); }}
-          />
-
-          <Divider orientation="left">Простои по погрузчику</Divider>
-
-          <IncidentTable forkliftId={selectedForklift?.id ?? null} />
-        </Space>
-      </Content>
+          </div>
+        </Content>
+      </Layout>
 
       <ConfirmModal
         open={!!deleteTarget}

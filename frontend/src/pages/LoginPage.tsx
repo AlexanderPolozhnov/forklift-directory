@@ -38,46 +38,43 @@ export default function LoginPage() {
   };
 
   return (
-      <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '100vh',
-            background: '#f0f2f5',
-          }}
-      >
-        <Card style={{ width: 360 }}>
-          <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: 24 }}>
-            Справочник погрузчиков
-          </Typography.Title>
-          <Form form={form} layout="vertical" onFinish={handleSubmit}>
-            <Form.Item
-                name="username"
-                label="Логин"
-                rules={[{ required: true, message: 'Введите логин' }]}
-            >
-              <Input autoFocus />
-            </Form.Item>
-            <Form.Item
-                name="password"
-                label="Пароль"
-                rules={[{ required: true, message: 'Введите пароль' }]}
-            >
-              <Input.Password />
-            </Form.Item>
-            {errorMsg && (
-                <Form.Item>
-                  <Alert message={errorMsg} type="error" showIcon />
-                </Form.Item>
-            )}
+    <div className="login-page">
+      <Card className="login-card">
+        <Typography.Title level={3} className="login-title">
+          Вход в систему
+        </Typography.Title>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={{ username: 'admin', password: 'admin123' }}
+        >
+          <Form.Item
+            name="username"
+            label="Логин"
+            rules={[{ required: true, message: 'Введите логин' }]}
+          >
+            <Input autoFocus />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="Пароль"
+            rules={[{ required: true, message: 'Введите пароль' }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          {errorMsg && (
             <Form.Item>
-              <Button type="primary" htmlType="submit" block loading={loading}>
-                Войти
-              </Button>
+              <Alert message={errorMsg} type="error" showIcon />
             </Form.Item>
-          </Form>
-        </Card>
-      </div>
+          )}
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={loading} className="login-button">
+              Войти
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
   );
 }

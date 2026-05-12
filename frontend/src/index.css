@@ -1,111 +1,473 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  --red-primary: #D40000;
+  --red-hover: #B80000;
+  --red-active: #990000;
+  --gray-btn: #8C8C8C;
+  --gray-btn-hover: #737373;
+  --bg-page: #F2F2F2;
+  --bg-white: #FFFFFF;
+  --border-table: #D9D9D9;
+  --text-primary: #262626;
+  --text-secondary: #595959;
+  --checkmark: #1677FF;
+  font-family: Arial, system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-page);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+* {
   box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
 }
 
 body {
   margin: 0;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+.app-shell {
+  min-height: 100vh;
+  padding: 8px;
+  background: var(--bg-white);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+.app-header {
+  height: 70px;
+  margin-bottom: 14px;
+  padding: 0 16px;
+  background: var(--red-primary);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  line-height: normal;
+  border-radius: 9px;
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+
+.profile-button {
+  min-width: 132px;
+  height: 32px;
+  padding: 5px 26px;
+  color: var(--text-primary);
+  background: var(--bg-white);
+  border: 0;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 400;
 }
+
+.profile-button:hover {
+  background: #f5f5f5 !important;
+  color: var(--text-primary) !important;
+}
+
+.app-body {
+  min-height: calc(100vh - 92px);
+  gap: 18px;
+  background: var(--bg-white);
+}
+
+.app-sidebar {
+  background: var(--bg-page) !important;
+  border-right: none;
+  padding-top: 14px;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.sidebar-item {
+  padding: 10px 12px;
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.sidebar-item:hover {
+  background: #E8E8E8;
+}
+
+.sidebar-item-active {
+  color: var(--red-primary);
+  font-weight: 500;
+}
+
+.app-content {
+  background: var(--bg-page);
+  padding: 8px 24px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 9px;
+}
+
+.page-title.ant-typography {
+  margin: 0 0 2px;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 30px;
+  margin-bottom: 10px;
+}
+
+.search-label {
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.search-input.ant-input {
+  width: 180px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border-table);
+  border-radius: 16px;
+  background: var(--bg-white);
+  font-size: 13px;
+}
+
+.red-action-button.ant-btn {
+  min-width: 116px;
+  height: 30px;
+  padding: 7px 24px;
+  color: #fff;
+  background: var(--red-primary);
+  border: 0;
+  border-radius: 18px;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+.red-action-button.ant-btn:hover,
+.red-action-button.ant-btn:focus {
+  color: #fff !important;
+  background: var(--red-hover) !important;
+}
+
+.red-action-button.ant-btn:active {
+  color: #fff !important;
+  background: var(--red-active) !important;
+}
+
+.red-action-button.ant-btn:disabled {
+  color: rgba(255, 255, 255, 0.75);
+  background: #E6A0A0;
+}
+
+.search-button.ant-btn {
+  min-width: 94px;
+  padding: 7px 20px;
+  font-weight: 400;
+}
+
+.reset-filter-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.reset-filter-button:hover {
+  text-decoration: none;
+}
+
+.reset-filter-cross {
+  color: var(--red-primary);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.reset-filter-text {
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.reset-filter-text:hover {
+  text-decoration: underline;
+  text-decoration-color: black;
+  cursor: pointer;
+}
+
+.add-forklift-button.ant-btn {
+  width: fit-content;
+  height: 32px;
+  min-width: 124px;
+  padding: 7px 24px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.tables-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 62fr) minmax(0, 38fr);
+  gap: 14px;
+  min-height: 395px;
+}
+
+.forklift-panel,
+.incident-panel {
+  min-height: 300px;
+  overflow: auto;
+  background: var(--bg-white);
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.forklift-panel {
+  max-height: calc(100vh - 280px);
+}
+
+.incident-panel-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-table .ant-table {
+  color: var(--text-primary);
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.pixel-table .ant-table-container {
+  border-radius: 8px;
+}
+
+.pixel-table .ant-table-thead>tr>th {
+  padding: 10px 12px;
+  color: var(--text-primary);
+  background: #FAFAFA;
+  border-bottom: 1px solid var(--border-table);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 15px;
+}
+
+.pixel-table .ant-table-tbody>tr>td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #F0F0F0;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.pixel-table .ant-table-tbody>tr:hover>td,
+.pixel-table .ant-table-tbody>tr.selected-table-row>td {
+  background: #E6F4FF !important;
+}
+
+.pixel-table .ant-table-tbody>tr.selected-table-row>td:first-child {
+  border-left: 3px solid var(--checkmark);
+}
+
+.pixel-table .ant-empty-description {
+  color: var(--gray-btn);
+  font-size: 13px;
+}
+
+.table-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.table-action-icon {
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.table-action-icon:hover {
+  color: var(--red-primary);
+}
+
+.save-icon {
+  color: #52C41A;
+  cursor: pointer;
+}
+
+.cancel-icon {
+  color: #FF4D4F;
+  cursor: pointer;
+}
+
+.active-checkmark {
+  color: var(--checkmark);
+  font-size: 16px;
+}
+
+.table-edit-input.ant-input,
+.table-edit-input.ant-input-number {
+  width: 100%;
+  height: 24px;
+  font-size: 12px;
+}
+
+.incident-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 6px 10px;
+}
+
+.incident-panel-title {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.incident-panel-number {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.incident-add-button.ant-btn {
+  min-width: 124px;
+  margin: 0 6px 12px;
+}
+
+.incident-modal .ant-modal-content {
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+}
+
+.incident-modal-title {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.incident-modal-divider {
+  height: 2px;
+  margin: 12px 0;
+  background: var(--red-primary);
+}
+
+.incident-date-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.incident-date-row .ant-form-item {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.incident-modal .ant-form-item-label>label {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.incident-date-picker.ant-picker {
+  width: 100%;
+  padding: 4px 16px;
+  border: 1px solid var(--border-table);
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.incident-description.ant-input {
+  height: 160px;
+  padding: 8px;
+  border: 1px solid var(--border-table);
+  border-radius: 8px;
+  font-size: 13px;
+  resize: none;
+}
+
+.incident-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.incident-save-button.ant-btn,
+.incident-exit-button.ant-btn {
+  min-width: 160px;
+  height: 42px;
+  border: 0;
+  border-radius: 22px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.incident-save-button.ant-btn {
+  background: var(--red-primary);
+}
+
+.incident-save-button.ant-btn:hover {
+  color: #fff !important;
+  background: var(--red-hover) !important;
+}
+
+.incident-exit-button.ant-btn {
+  background: var(--gray-btn);
+}
+
+.incident-exit-button.ant-btn:hover {
+  color: #fff !important;
+  background: var(--gray-btn-hover) !important;
+}
+
+.login-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card.ant-card {
+  width: 480px;
+  border-radius: 8px;
+}
+
+.login-card .ant-card-body {
+  padding: 40px;
+}
+
+.login-title.ant-typography {
+  margin: 0 0 24px;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.login-button.ant-btn {
+  height: 40px;
+  background: var(--red-primary);
+  border: 0;
+  border-radius: 22px;
+}
+
+.login-button.ant-btn:hover {
+  background: var(--red-hover) !important;
+}
+
 p {
   margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }

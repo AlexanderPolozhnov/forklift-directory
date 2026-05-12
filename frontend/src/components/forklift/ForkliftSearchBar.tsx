@@ -1,4 +1,5 @@
-import { Button, Input, Space } from 'antd';
+import { Button, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
 interface ForkliftSearchBarProps {
@@ -15,16 +16,21 @@ export default function ForkliftSearchBar({ onSearch }: ForkliftSearchBarProps) 
   };
 
   return (
-    <Space>
+    <div className="search-row">
+      <span className="search-label">Номер погрузчика</span>
       <Input
-        placeholder="Номер погрузчика"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onPressEnter={handleSearch}
-        style={{ width: 220 }}
+        className="search-input"
       />
-      <Button type="primary" onClick={handleSearch}>Искать</Button>
-      <Button onClick={handleReset}>Сброс</Button>
-    </Space>
+      <Button className="red-action-button search-button" icon={<SearchOutlined />} onClick={handleSearch}>
+        Искать
+      </Button>
+      <span className="reset-filter-button" onClick={handleReset}>
+        <span className="reset-filter-cross">×</span>
+        <span className="reset-filter-text">Сбросить фильтр</span>
+      </span>
+    </div>
   );
 }
