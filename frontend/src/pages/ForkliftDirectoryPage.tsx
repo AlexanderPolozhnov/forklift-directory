@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { AxiosError } from 'axios';
-import { App, Button, Layout, Modal, Typography } from 'antd';
+import { App, Button, Layout, Typography } from 'antd';
 import ForkliftTable from '../components/forklift/ForkliftTable';
 import ForkliftSearchBar from '../components/forklift/ForkliftSearchBar';
 import IncidentTable from '../components/incident/IncidentTable';
