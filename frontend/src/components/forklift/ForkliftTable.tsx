@@ -127,7 +127,7 @@ export default function ForkliftTable({
       render: (_: string, record) => renderEditable('number', record),
     },
     {
-      title: <>Грузоподъём-<br />ность</>,
+      title: <span>Грузоподъём-<br />ность</span>,
       dataIndex: 'loadCapacity',
       width: 85,
       align: 'center',
