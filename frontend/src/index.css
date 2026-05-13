@@ -26,7 +26,8 @@
 html,
 body,
 #root {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 body {
@@ -34,9 +35,10 @@ body {
 }
 
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
   padding: 8px;
   background: var(--bg-white);
+  overflow: hidden;
 }
 
 .app-header {
@@ -70,9 +72,11 @@ body {
 }
 
 .app-body {
-  min-height: calc(100vh - 92px);
+  height: calc(100vh - 92px);
+  min-height: 0;
   gap: 18px;
   background: var(--bg-white);
+  overflow: hidden;
 }
 
 .app-sidebar {
@@ -110,6 +114,9 @@ body {
   flex-direction: column;
   gap: 10px;
   border-radius: 9px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .page-title.ant-typography {
@@ -220,13 +227,18 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 60fr) minmax(0, 40fr);
   gap: 8px;
-  min-height: 395px;
+  flex: 1;
+  align-items: stretch;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .forklift-panel,
 .incident-panel {
-  min-height: 300px;
-  overflow: auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-white);
   border: 1px solid #E0E0E0;
   border-radius: 8px;
@@ -234,13 +246,29 @@ body {
 }
 
 .forklift-panel {
-  max-height: calc(100vh - 240px);
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+}
+
+.forklift-panel>form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
 .incident-column {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100%;
+  min-height: 0;
+}
+
+.incident-panel {
+  flex: 1;
+  min-height: 0;
 }
 
 .incident-panel-empty {
@@ -260,11 +288,47 @@ body {
   border-radius: 8px;
 }
 
+.pixel-table,
+.pixel-table .ant-spin-nested-loading,
+.pixel-table .ant-spin-container,
+.pixel-table .ant-table,
+.pixel-table .ant-table-container {
+  height: 100%;
+  min-height: 0;
+}
+
+.pixel-table,
+.pixel-table .ant-spin-nested-loading,
+.pixel-table .ant-spin-container,
+.pixel-table .ant-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.pixel-table .ant-table-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.pixel-table .ant-table-header {
+  flex: 0 0 auto;
+}
+
+.pixel-table .ant-table-body {
+  flex: 1 1 auto;
+  height: 100% !important;
+  min-height: 0;
+  max-height: 100% !important;
+  overflow-y: scroll !important;
+}
+
 .pixel-table .ant-table-thead>tr>th {
   padding: 6px 2px;
   color: var(--text-primary);
   background: #FAFAFA;
   border-bottom: 1px solid var(--border-table);
+  border-right: 1px solid #E0E0E0;
   font-size: 11px;
   font-weight: 600;
   line-height: 15px;
@@ -279,6 +343,7 @@ body {
 .pixel-table .ant-table-tbody>tr>td {
   padding: 6px 2px;
   border-bottom: 1px solid #F0F0F0;
+  border-right: 1px solid #E0E0E0;
   font-size: 11px;
   line-height: 16px;
   text-align: center;
