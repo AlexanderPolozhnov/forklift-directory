@@ -93,39 +93,46 @@ export default function IncidentTable({ forkliftId, forkliftNumber }: IncidentTa
     {
       title: 'Код записи',
       dataIndex: 'id',
-      width: 50,
+      width: 60,
       align: 'center',
     },
     {
       title: 'Начало',
       dataIndex: 'startedAt',
-      width: 110,
+      width: 95,
       align: 'center',
+      className: 'incident-date-column',
+      onCell: () => ({ className: 'incident-date-column' }),
       render: (v: string) => dayjs(v).format('DD.MM.YYYY HH:mm'),
     },
     {
       title: 'Окончание',
       dataIndex: 'resolvedAt',
-      width: 110,
+      width: 95,
       align: 'center',
+      className: 'incident-date-column',
+      onCell: () => ({ className: 'incident-date-column' }),
       render: (v: string | null) => v ? dayjs(v).format('DD.MM.YYYY HH:mm') : '—',
     },
     {
       title: 'Время простоя',
       dataIndex: 'downtimeFormatted',
-      width: 75,
+      width: 70,
       align: 'center',
     },
     {
       title: 'Причина',
       dataIndex: 'description',
       ellipsis: true,
+      align: 'left',
+      className: 'header-with-padding',
+      onCell: () => ({ className: 'cell-with-padding' }),
       render: (v: string | null) => v ?? '—',
     },
     {
       title: 'Действия',
       key: 'actions',
-      width: 60,
+      width: 55,
       align: 'center',
       render: (_: unknown, record: IncidentResponse) => (
         <span className="table-actions">
@@ -138,32 +145,36 @@ export default function IncidentTable({ forkliftId, forkliftNumber }: IncidentTa
 
   if (!forkliftId) {
     return (
-      <div className="incident-panel incident-panel-empty">
-        <Empty description="Выберите погрузчик для просмотра инцидентов" />
+      <div className="incident-column">
+        <div className="incident-panel incident-panel-empty">
+          <Empty description="Выберите погрузчик для просмотра инцидентов" />
+        </div>
       </div>
     );
   }
 
-  if (isLoading) return <div className="incident-panel"><LoadingSpinner /></div>;
-  if (isError) return <div className="incident-panel"><Typography.Text type="danger">Ошибка загрузки инцидентов</Typography.Text></div>;
+  if (isLoading) return <div className="incident-column"><div className="incident-panel"><LoadingSpinner /></div></div>;
+  if (isError) return <div className="incident-column"><div className="incident-panel"><Typography.Text type="danger">Ошибка загрузки инцидентов</Typography.Text></div></div>;
 
   return (
-    <div className="incident-panel">
+    <div className="incident-column">
       <div className="incident-panel-header">
         <span className="incident-panel-title">Простои по погрузчику</span>
         <span className="incident-panel-number">{forkliftNumber}</span>
       </div>
       <Button className="red-action-button incident-add-button" onClick={handleAdd}>Добавить</Button>
-      <Table
-        rowKey="id"
-        className="pixel-table incident-table"
-        columns={columns}
-        dataSource={incidents ?? []}
-        pagination={false}
-        size="small"
-        locale={{ emptyText: <Empty description="Нет инцидентов" /> }}
-        scroll={{ x: 515, y: 335 }}
-      />
+      <div className="incident-panel">
+        <Table
+          rowKey="id"
+          className="pixel-table incident-table"
+          columns={columns}
+          dataSource={incidents ?? []}
+          pagination={false}
+          size="small"
+          locale={{ emptyText: <Empty description="Нет инцидентов" /> }}
+          scroll={{ x: 465, y: 335 }}
+        />
+      </div>
       <IncidentModal
         open={modalOpen}
         incident={editingIncident}

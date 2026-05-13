@@ -58,9 +58,10 @@ body {
   color: var(--text-primary);
   background: var(--bg-white);
   border: 0;
-  border-radius: 18px;
+  border-radius: 10px;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
+  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .profile-button:hover {
@@ -83,9 +84,10 @@ body {
 }
 
 .sidebar-item {
-  padding: 10px 12px;
+  padding: 10px 8px;
   color: var(--text-primary);
   font-size: 13px;
+  font-weight: 500;
   line-height: 1.4;
   cursor: pointer;
   word-break: break-word;
@@ -98,7 +100,7 @@ body {
 
 .sidebar-item-active {
   color: var(--red-primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .app-content {
@@ -114,7 +116,7 @@ body {
   margin: 0 0 2px;
   color: var(--text-primary);
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 24px;
 }
 
@@ -132,7 +134,7 @@ body {
 }
 
 .search-input.ant-input {
-  width: 180px;
+  width: 140px;
   height: 30px;
   padding: 0 8px;
   border: 1px solid var(--border-table);
@@ -173,6 +175,7 @@ body {
   min-width: 94px;
   padding: 7px 20px;
   font-weight: 400;
+  border-radius: 6px;
 }
 
 .reset-filter-button {
@@ -210,12 +213,13 @@ body {
   padding: 7px 24px;
   margin-bottom: 8px;
   font-weight: 500;
+  border-radius: 10px;
 }
 
 .tables-layout {
   display: grid;
-  grid-template-columns: minmax(0, 62fr) minmax(0, 38fr);
-  gap: 14px;
+  grid-template-columns: minmax(0, 60fr) minmax(0, 40fr);
+  gap: 8px;
   min-height: 395px;
 }
 
@@ -226,11 +230,17 @@ body {
   background: var(--bg-white);
   border: 1px solid #E0E0E0;
   border-radius: 8px;
-  padding: 12px;
+  padding: 0;
 }
 
 .forklift-panel {
-  max-height: calc(100vh - 280px);
+  max-height: calc(100vh - 240px);
+}
+
+.incident-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .incident-panel-empty {
@@ -241,8 +251,9 @@ body {
 
 .pixel-table .ant-table {
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 11px;
   border-radius: 8px;
+  border-spacing: 0;
 }
 
 .pixel-table .ant-table-container {
@@ -250,20 +261,32 @@ body {
 }
 
 .pixel-table .ant-table-thead>tr>th {
-  padding: 10px 12px;
+  padding: 6px 2px;
   color: var(--text-primary);
   background: #FAFAFA;
   border-bottom: 1px solid var(--border-table);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   line-height: 15px;
+  text-align: center;
+}
+
+.pixel-table .ant-table-thead>tr>th.header-with-padding {
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .pixel-table .ant-table-tbody>tr>td {
-  padding: 8px 12px;
+  padding: 6px 2px;
   border-bottom: 1px solid #F0F0F0;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 16px;
+  text-align: center;
+}
+
+.pixel-table .ant-table-tbody>tr>td.cell-with-padding {
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .pixel-table .ant-table-tbody>tr:hover>td,
@@ -285,6 +308,41 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+.forklift-table .table-actions {
+  gap: 4px;
+}
+
+.incident-table .table-actions {
+  gap: 4px;
+}
+
+.incident-table .ant-table {
+  font-size: 10px;
+}
+
+.incident-table .ant-table-thead>tr>th,
+.incident-table .ant-table-tbody>tr>td {
+  font-size: 10px;
+  line-height: 13px;
+}
+
+.incident-table .ant-table-thead>tr>th.incident-date-column,
+.incident-table .ant-table-tbody>tr>td.incident-date-column {
+  white-space: nowrap;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.incident-table .ant-table-thead>tr>th.header-with-padding {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.incident-table .ant-table-tbody>tr>td.cell-with-padding {
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .table-action-icon {
@@ -323,13 +381,13 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 6px 10px;
+  padding: 6px 6px 6px;
 }
 
 .incident-panel-title {
   color: var(--text-primary);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .incident-panel-number {
@@ -339,8 +397,14 @@ body {
 }
 
 .incident-add-button.ant-btn {
-  min-width: 124px;
-  margin: 0 6px 12px;
+  width: fit-content;
+  align-self: flex-start;
+  min-width: 90px;
+  height: 28px;
+  padding: 4px 16px;
+  margin: 0 6px 6px;
+  font-size: 13px;
+  border-radius: 8px;
 }
 
 .incident-modal .ant-modal-content {

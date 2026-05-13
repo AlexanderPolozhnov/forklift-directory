@@ -130,7 +130,7 @@ export default function ForkliftDirectoryPage() {
       </Header>
 
       <Layout className="app-body">
-        <Sider width={140} className="app-sidebar">
+        <Sider width={120} className="app-sidebar">
           {sidebarItems.map((item) => (
             <div
               key={item}

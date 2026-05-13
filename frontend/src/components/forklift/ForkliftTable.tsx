@@ -117,26 +117,26 @@ export default function ForkliftTable({
     {
       title: 'Марка',
       dataIndex: 'brand',
-      width: 100,
+      width: 85,
       render: (_: string, record) => renderEditable('brand', record),
     },
     {
       title: 'Номер',
       dataIndex: 'number',
-      width: 100,
+      width: 75,
       render: (_: string, record) => renderEditable('number', record),
     },
     {
       title: <>Грузоподъём-<br />ность</>,
       dataIndex: 'loadCapacity',
-      width: 90,
+      width: 85,
       align: 'center',
       render: (_: number, record) => renderEditable('loadCapacity', record, true),
     },
     {
       title: 'Активен',
       dataIndex: 'isActive',
-      width: 65,
+      width: 55,
       align: 'center',
       render: (v: boolean, record) => {
         const isEditing = editingId === record.id || (editingId === 'new' && record.id === -1);
@@ -153,19 +153,19 @@ export default function ForkliftTable({
     {
       title: 'Время и Дата изменения',
       dataIndex: 'modifiedAt',
-      width: 130,
+      width: 110,
       align: 'center',
       render: (v: string) => v ? dayjs(v).format('DD.MM.YYYY HH:mm') : '',
     },
     {
       title: 'Пользователь',
       dataIndex: 'modifiedBy',
-      width: 110,
+      width: 85,
     },
     {
       title: 'Действия',
       key: 'actions',
-      width: 70,
+      width: 50,
       align: 'center',
       render: (_: unknown, record) => {
         const isEditing = editingId === record.id || (editingId === 'new' && record.id === -1);
@@ -205,7 +205,7 @@ export default function ForkliftTable({
         })}
         pagination={false}
         locale={{ emptyText: <Empty description="Нет погрузчиков" /> }}
-        scroll={{ x: 735, y: 335 }}
+        scroll={{ x: 615, y: 335 }}
       />
     </Form>
   );
