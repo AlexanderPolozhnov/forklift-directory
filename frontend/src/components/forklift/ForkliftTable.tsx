@@ -1,7 +1,9 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Checkbox, Empty, Form, Input, InputNumber, Table } from 'antd';
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
+import type { InputRef } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import type { TableRef } from 'antd/es/table';
 import dayjs from 'dayjs';
 import type { ForkliftRequest, ForkliftResponse } from '../../types';
 
@@ -33,6 +35,8 @@ export default function ForkliftTable({
   saveLoading,
 }: ForkliftTableProps) {
   const [form] = Form.useForm<ForkliftRequest>();
+  const tableRef = useRef<TableRef>(null);
+  const brandInputRef = useRef<InputRef>(null);
   const isAdding = editingId === 'new';
 
   const tableData = useMemo(() => {
@@ -54,6 +58,10 @@ export default function ForkliftTable({
   useEffect(() => {
     if (editingId === 'new') {
       form.setFieldsValue({ brand: '', number: '', loadCapacity: 0, isActive: true });
+      window.requestAnimationFrame(() => {
+        tableRef.current?.scrollTo({ top: 0 });
+        brandInputRef.current?.focus();
+      });
       return;
     }
     const record = data.find((item) => item.id === editingId);
@@ -100,7 +108,10 @@ export default function ForkliftTable({
         {numeric ? (
           <InputNumber min={0.001} step={0.001} precision={3} className="table-edit-input" />
         ) : (
-          <Input className="table-edit-input" />
+          <Input
+            ref={editingId === 'new' && record.id === -1 && name === 'brand' ? brandInputRef : undefined}
+            className="table-edit-input"
+          />
         )}
       </Form.Item>
     );
@@ -190,6 +201,7 @@ export default function ForkliftTable({
   return (
     <Form form={form} component={false}>
       <Table
+        ref={tableRef}
         rowKey="id"
         className="pixel-table forklift-table"
         columns={columns}
