@@ -24,6 +24,7 @@ public class ForkliftService {
     private final ForkliftRepository forkliftRepository;
     private final IncidentRepository incidentRepository;
     private final ForkliftMapper forkliftMapper;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public Page<ForkliftResponse> findAll(String number, Pageable pageable) {
@@ -34,17 +35,21 @@ public class ForkliftService {
     @Transactional
     public ForkliftResponse create(ForkliftRequest request) {
         if (forkliftRepository.existsByNumberIgnoreCase(request.number())) {
-            throw new BusinessException("Погрузчик с номером " + request.number() + " уже существует", HttpStatus.CONFLICT);
+            throw new BusinessException("Погрузчик с номером " + request.number() + " уже существует",
+                    HttpStatus.CONFLICT);
         }
         Forklift forklift = forkliftMapper.toEntity(request);
         forklift.setModifiedBy(getCurrentUserFullName());
-        return forkliftMapper.toResponse(forkliftRepository.save(forklift));
+        Forklift savedForklift = forkliftRepository.save(forklift);
+        notificationService.sendForkliftCreated(savedForklift.getNumber());
+        return forkliftMapper.toResponse(savedForklift);
     }
 
     @Transactional
     public ForkliftResponse update(Long id, ForkliftRequest request) {
         if (forkliftRepository.existsByNumberIgnoreCaseAndIdNot(request.number(), id)) {
-            throw new BusinessException("Погрузчик с номером " + request.number() + " уже существует", HttpStatus.CONFLICT);
+            throw new BusinessException("Погрузчик с номером " + request.number() + " уже существует",
+                    HttpStatus.CONFLICT);
         }
         Forklift forklift = findForkliftById(id);
         forkliftMapper.updateEntity(forklift, request);
@@ -54,15 +59,15 @@ public class ForkliftService {
 
     @Transactional
     public void delete(Long id) {
-        findForkliftById(id);
+        Forklift forklift = findForkliftById(id);
         long incidentCount = incidentRepository.countByForkliftId(id);
         if (incidentCount > 0) {
             throw new BusinessException(
                     "Невозможно удалить погрузчик с текущими инцидентами. Количество: " + incidentCount,
-                    HttpStatus.CONFLICT
-            );
+                    HttpStatus.CONFLICT);
         }
         forkliftRepository.deleteById(id);
+        notificationService.sendForkliftDeleted(forklift.getNumber());
     }
 
     private Forklift findForkliftById(Long id) {
