@@ -18,7 +18,7 @@ export function extractErrorMessage(error: unknown): string {
     );
   }
   if (status === 401 || status === 403) {
-    return 'Неверный логин или пароль';
+    return 'Сессия истекла или недостаточно прав';
   }
   if (status >= 500) {
     return 'Ошибка сервера. Попробуйте позже';

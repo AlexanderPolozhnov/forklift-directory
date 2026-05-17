@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { useAuthStore } from '../store/authStore';
 
 const apiClient = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api/v1`,
+  baseURL: `${import.meta.env.VITE_API_URL || ''}/api/v1`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -18,11 +19,17 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    const status = error.response?.status;
     const isLoginRequest = error.config?.url?.includes('/auth/login');
-    if ((error.response?.status === 401 || error.response?.status === 403) && !isLoginRequest) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('fullName');
-      window.location.href = '/login';
+
+    if ((status === 401 || status === 403) && !isLoginRequest) {
+      // Clear auth state via store
+      useAuthStore.getState().clearAuth();
+      
+      // Redirect if not already on login page
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

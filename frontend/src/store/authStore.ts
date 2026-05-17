@@ -8,6 +8,32 @@ interface AuthState {
   isAuthenticated: () => boolean;
 }
 
+const isTokenExpired = (token: string | null): boolean => {
+  if (!token) return true;
+  try {
+    const payloadBase64 = token.split('.')[1];
+    if (!payloadBase64) return true;
+    
+    // Convert base64url to base64
+    const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      window.atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    
+    const decodedPayload = JSON.parse(jsonPayload);
+    const exp = decodedPayload.exp;
+    if (exp) {
+      return Date.now() >= exp * 1000;
+    }
+  } catch (e) {
+    return true;
+  }
+  return false;
+};
+
 export const useAuthStore = create<AuthState>((set, get) => ({
   token: localStorage.getItem('token'),
   fullName: localStorage.getItem('fullName'),
@@ -24,5 +50,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ token: null, fullName: null });
   },
 
-  isAuthenticated: () => !!get().token,
+  isAuthenticated: () => {
+    const token = get().token;
+    return !!token && !isTokenExpired(token);
+  },
 }));
